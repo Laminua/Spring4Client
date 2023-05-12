@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/user_style.css">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome page</title>
+</head>
+<body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+                url: "getUserInfo/",
+                dataType: 'text',
+                type: 'GET',
+                success: function (data) {
+                    var userProfile = $.parseJSON(data);
+
+                    document.getElementById("name").innerHTML = userProfile.name;
+                    document.getElementById("username").innerHTML = userProfile.username;
+                    document.getElementById("password").innerHTML = userProfile.password;
+                    document.getElementById("email").innerHTML = userProfile.email;
+                }
+            }
+        )
+    });
+</script>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark py-4">
+</nav>
+
+<main role="main">
+
+    <div class="jumbotron">
+        <div class="container" id="container">
+            <h1 class="display-3">Привет, <p class="text-center" id="name"></h1>
+            <p>Ваш логин:
+                <span style="font-weight: bold" id="username"></span></p>
+            Ваш пароль:
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    Показать пароль
+                </button>
+                <div class="dropdown-menu">
+                    <span style="font-weight: bold" id="password"></span>
+                </div>
+            </div>
+            <p>Ваш Email:
+                <span style="font-weight: bold" id="email"></span></p>
+            <p><a class="btn btn-primary btn-lg" href="/logout" role="button">Logout &raquo;</a></p>
+        </div>
+    </div>
+    <hr>
+
+</main>
+
+<footer class="container">
+    <p>&copy; Yartsev Kirill, 2023</p>
+</footer>
+</body>
+</html>
