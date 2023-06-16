@@ -1,6 +1,6 @@
 package com.example.springexercise3boot.security;
 
-import com.example.springexercise3boot.models.UserProfile;
+import com.example.springexercise3boot.models.user.UserProfile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

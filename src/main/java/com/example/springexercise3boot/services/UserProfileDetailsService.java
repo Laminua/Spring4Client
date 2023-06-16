@@ -1,6 +1,6 @@
 package com.example.springexercise3boot.services;
 
-import com.example.springexercise3boot.models.UserProfile;
+import com.example.springexercise3boot.models.user.UserProfile;
 import com.example.springexercise3boot.security.UserProfileDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

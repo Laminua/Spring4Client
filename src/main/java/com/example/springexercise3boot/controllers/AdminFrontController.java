@@ -1,7 +1,7 @@
 package com.example.springexercise3boot.controllers;
 
 import com.example.springexercise3boot.dto.UserProfileDTO;
-import com.example.springexercise3boot.models.UserProfile;
+import com.example.springexercise3boot.models.user.UserProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -22,8 +22,11 @@ import java.util.*;
 @RestController
 @RequestMapping("/admin/")
 public class AdminFrontController {
+
     private final String URI_USERS = "http://localhost:8081/api/users";
+
     private final String URI_USERPROFILE_ID = "http://localhost:8081/api/users/{id}";
+
     RestTemplate restTemplate;
 
     @Autowired
@@ -39,10 +42,10 @@ public class AdminFrontController {
     }
 
     @GetMapping(value = "users")
-    public ResponseEntity<List<UserProfile>> getUsers() {
+    public ResponseEntity<List<UserProfileDTO>> getUsers() {
         log.info("Front backend request: requesting list of UserProfiles");
 
-        UserProfile[] userProfilesArr = restTemplate.getForObject(URI_USERS, UserProfile[].class);
+        UserProfileDTO[] userProfilesArr = restTemplate.getForObject(URI_USERS, UserProfileDTO[].class);
 
         if (userProfilesArr == null) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
@@ -97,21 +100,22 @@ public class AdminFrontController {
         }
 
         HttpEntity<UserProfileDTO> request = new HttpEntity<>(profileDTO);
-        String urlToUpdate = "http://localhost:8081/api/updateUser";
+
+        String apiUpdateUrl = "http://localhost:8081/api/updateUser";
+
         try {
-            return restTemplate.exchange(urlToUpdate, HttpMethod.POST, request, String.class);
+            return restTemplate.exchange(apiUpdateUrl, HttpMethod.POST, request, String.class);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("users/{id}")
-    public ResponseEntity getUserProfileById(@PathVariable int id) {
+    public ResponseEntity getUserProfileById(@PathVariable long id) {
         log.info("Front backend request: requesting UserProfile with id " + id);
-        Map<String, String> params = new HashMap<>();
-        params.put("id", String.valueOf(id));
+
         try {
-            UserProfile profile = restTemplate.getForObject(URI_USERPROFILE_ID, UserProfile.class, params);
+            UserProfile profile = restTemplate.getForObject(URI_USERPROFILE_ID, UserProfile.class, id);
             return new ResponseEntity<>(profile, HttpStatus.OK);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
@@ -119,14 +123,17 @@ public class AdminFrontController {
     }
 
     @GetMapping("deleteUser")
-    public ResponseEntity<String> deleteUser(@RequestParam("id") int id) {
+    public ResponseEntity<String> deleteUser(@RequestParam("id") long id) {
         log.info("Front backend request: requesting delete UserProfile with id " + id);
 
+        String apiDeleteUrl = "http://localhost:8081/api/deleteUser?id=";
+
         try {
-            restTemplate.delete("http://localhost:8081/api/deleteUser?id=" + id);
+            restTemplate.delete(apiDeleteUrl + id);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
         }
+
         return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
     }
 }
