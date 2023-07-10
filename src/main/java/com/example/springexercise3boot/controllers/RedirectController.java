@@ -14,7 +14,7 @@ public class RedirectController {
 
     @RequestMapping("/")
     public RedirectView redirectFromRootBasedOnRoleIfAlreadyLogged() {
-        log.info("Redirecting logged user from root");
+        log.debug("Redirecting logged user from root");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String role = auth.getAuthorities().toString();

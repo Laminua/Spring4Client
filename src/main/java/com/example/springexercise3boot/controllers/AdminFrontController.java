@@ -2,8 +2,8 @@ package com.example.springexercise3boot.controllers;
 
 import com.example.springexercise3boot.dto.UserProfileDTO;
 import com.example.springexercise3boot.models.user.UserProfile;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -16,34 +16,32 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/admin/")
 public class AdminFrontController {
 
-    private final String URI_USERS = "http://localhost:8081/api/users";
+    private static final String URI_USERS = "http://localhost:8081/api/users";
 
-    private final String URI_USERPROFILE_ID = "http://localhost:8081/api/users/{id}";
+    private static final String URI_USERPROFILE_ID = "http://localhost:8081/api/users/{id}";
 
     RestTemplate restTemplate;
 
-    @Autowired
-    public AdminFrontController(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
     @GetMapping("index")
     public ModelAndView showAdminPage() {
-        log.info("Front backend request: show Admin page");
+        log.debug("Front backend request: show Admin page");
 
         return new ModelAndView("admin/index");
     }
 
     @GetMapping(value = "users")
     public ResponseEntity<List<UserProfileDTO>> getUsers() {
-        log.info("Front backend request: requesting list of UserProfiles");
+        log.debug("Front backend request: requesting list of UserProfiles");
 
         UserProfileDTO[] userProfilesArr = restTemplate.getForObject(URI_USERS, UserProfileDTO[].class);
 
@@ -55,7 +53,7 @@ public class AdminFrontController {
 
     @GetMapping("addUserForm")
     public ModelAndView showAddUserForm() {
-        log.info("Front backend request: show \"Add user\" page");
+        log.debug("Front backend request: show \"Add user\" page");
 
         return new ModelAndView("admin/add-user");
     }
@@ -63,7 +61,7 @@ public class AdminFrontController {
     @PostMapping("users")
     public ResponseEntity<String> addUser(@Valid UserProfileDTO profileDTO, BindingResult bindingResult)
             throws BindException {
-        log.info("Front backend request: requesting endpoint to create UserProfile");
+        log.debug("Front backend request: requesting endpoint to create UserProfile");
 
         if (bindingResult.hasErrors()) {
             log.error("User can't be added because of invalid data");
@@ -81,7 +79,7 @@ public class AdminFrontController {
 
     @GetMapping("updateUserForm")
     public ModelAndView showUpdateUserForm() {
-        log.info("Front backend request: show \"Update user\" page");
+        log.debug("Front backend request: show \"Update user\" page");
 
         return new ModelAndView("admin/update-user");
     }
@@ -89,10 +87,8 @@ public class AdminFrontController {
     @PostMapping("updateUser")
     public ResponseEntity<String> updateUser(@Valid UserProfileDTO profileDTO, BindingResult bindingResult)
             throws BindException {
-        log.info("Front backend request: updating UserProfile in database. Name: "
-                + profileDTO.getName()
-                + " Email: "
-                + profileDTO.getEmail());
+        log.debug("Front backend request: updating UserProfile in database. Name: {}, Email: {}",
+                profileDTO.getName(), profileDTO.getEmail());
 
         if (bindingResult.hasErrors()) {
             log.error("User can't be updated because of invalid data");
@@ -112,7 +108,7 @@ public class AdminFrontController {
 
     @GetMapping("users/{id}")
     public ResponseEntity getUserProfileById(@PathVariable long id) {
-        log.info("Front backend request: requesting UserProfile with id " + id);
+        log.debug("Front backend request: requesting UserProfile with id {}", id);
 
         try {
             UserProfile profile = restTemplate.getForObject(URI_USERPROFILE_ID, UserProfile.class, id);
@@ -124,7 +120,7 @@ public class AdminFrontController {
 
     @GetMapping("deleteUser")
     public ResponseEntity<String> deleteUser(@RequestParam("id") long id) {
-        log.info("Front backend request: requesting delete UserProfile with id " + id);
+        log.debug("Front backend request: requested deletion of UserProfile with id {}", id);
 
         String apiDeleteUrl = "http://localhost:8081/api/deleteUser?id=";
 

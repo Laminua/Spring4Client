@@ -1,6 +1,5 @@
 package com.example.springexercise3boot.models.test;
 
-import com.example.springexercise3boot.models.user.UserProfile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AssignedTests {
+public class AssignedTest {
 
     private long id;
 
