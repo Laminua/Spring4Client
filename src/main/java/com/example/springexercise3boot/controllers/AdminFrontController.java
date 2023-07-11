@@ -1,23 +1,16 @@
 package com.example.springexercise3boot.controllers;
 
 import com.example.springexercise3boot.dto.UserProfileDTO;
-import com.example.springexercise3boot.models.user.UserProfile;
+import com.example.springexercise3boot.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -26,11 +19,7 @@ import java.util.List;
 @RequestMapping("/admin/")
 public class AdminFrontController {
 
-    private static final String URI_USERS = "http://localhost:8081/api/users";
-
-    private static final String URI_USERPROFILE_ID = "http://localhost:8081/api/users/{id}";
-
-    RestTemplate restTemplate;
+    private final AdminService adminService;
 
     @GetMapping("index")
     public ModelAndView showAdminPage() {
@@ -43,12 +32,7 @@ public class AdminFrontController {
     public ResponseEntity<List<UserProfileDTO>> getUsers() {
         log.debug("Front backend request: requesting list of UserProfiles");
 
-        UserProfileDTO[] userProfilesArr = restTemplate.getForObject(URI_USERS, UserProfileDTO[].class);
-
-        if (userProfilesArr == null) {
-            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(Arrays.asList(userProfilesArr), HttpStatus.OK);
+        return adminService.getUsers();
     }
 
     @GetMapping("addUserForm")
@@ -63,18 +47,7 @@ public class AdminFrontController {
             throws BindException {
         log.debug("Front backend request: requesting endpoint to create UserProfile");
 
-        if (bindingResult.hasErrors()) {
-            log.error("User can't be added because of invalid data");
-            throw new BindException(bindingResult);
-        }
-
-        HttpEntity<UserProfileDTO> request = new HttpEntity<>(profileDTO);
-
-        try {
-            return restTemplate.exchange(URI_USERS, HttpMethod.POST, request, String.class);
-        } catch (HttpClientErrorException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
-        }
+        return adminService.addUser(profileDTO, bindingResult);
     }
 
     @GetMapping("updateUserForm")
@@ -90,46 +63,20 @@ public class AdminFrontController {
         log.debug("Front backend request: updating UserProfile in database. Name: {}, Email: {}",
                 profileDTO.getName(), profileDTO.getEmail());
 
-        if (bindingResult.hasErrors()) {
-            log.error("User can't be updated because of invalid data");
-            throw new BindException(bindingResult);
-        }
-
-        HttpEntity<UserProfileDTO> request = new HttpEntity<>(profileDTO);
-
-        String apiUpdateUrl = "http://localhost:8081/api/updateUser";
-
-        try {
-            return restTemplate.exchange(apiUpdateUrl, HttpMethod.POST, request, String.class);
-        } catch (HttpClientErrorException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
-        }
+        return adminService.updateUser(profileDTO, bindingResult);
     }
 
     @GetMapping("users/{id}")
     public ResponseEntity getUserProfileById(@PathVariable long id) {
         log.debug("Front backend request: requesting UserProfile with id {}", id);
 
-        try {
-            UserProfile profile = restTemplate.getForObject(URI_USERPROFILE_ID, UserProfile.class, id);
-            return new ResponseEntity<>(profile, HttpStatus.OK);
-        } catch (HttpClientErrorException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
-        }
+        return adminService.getUserProfileById(id);
     }
 
     @GetMapping("deleteUser")
     public ResponseEntity<String> deleteUser(@RequestParam("id") long id) {
         log.debug("Front backend request: requested deletion of UserProfile with id {}", id);
 
-        String apiDeleteUrl = "http://localhost:8081/api/deleteUser?id=";
-
-        try {
-            restTemplate.delete(apiDeleteUrl + id);
-        } catch (HttpClientErrorException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
+        return adminService.deleteUser(id);
     }
 }

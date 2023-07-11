@@ -13,6 +13,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Getter
 public class UserProfileDetails implements UserDetails {
+
     private final UserProfile userProfile;
 
     @Override
