@@ -13,7 +13,8 @@ public class AuthController {
 
     @GetMapping("/login")
     public ModelAndView loginPage() {
-        log.info("Authentication page has been requested");
+        log.debug("Authentication page has been requested");
+
         return new ModelAndView("auth/login");
     }
 }

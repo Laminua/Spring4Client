@@ -29,6 +29,8 @@
                     document.getElementById("username").innerHTML = userProfile.username;
                     document.getElementById("password").innerHTML = userProfile.password;
                     document.getElementById("email").innerHTML = userProfile.email;
+                    document.getElementById("testing").innerHTML =
+                        `<a class="btn btn-primary btn-lg" href="testing?id=${userProfile.id}" role="button">Пройти тесты</a>`;
                 }
             }
         )
@@ -57,6 +59,7 @@
             </div>
             <p>Ваш Email:
                 <span style="font-weight: bold" id="email"></span></p>
+            <p><a id="testing"></a></p>
             <p><a class="btn btn-primary btn-lg" href="/logout" role="button">Logout &raquo;</a></p>
         </div>
     </div>

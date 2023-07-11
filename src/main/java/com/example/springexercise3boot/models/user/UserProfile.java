@@ -1,4 +1,4 @@
-package com.example.springexercise3boot.models;
+package com.example.springexercise3boot.models.user;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 public class UserProfile {
-    private int id;
+    private long id;
     private String username;
     private String password;
     private Role role;
