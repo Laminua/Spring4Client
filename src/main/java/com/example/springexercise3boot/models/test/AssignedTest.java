@@ -11,8 +11,6 @@ public class AssignedTest {
 
     private long id;
 
-//    private UserProfile userProfile;
-
     private Test test;
 
     private boolean finished;
