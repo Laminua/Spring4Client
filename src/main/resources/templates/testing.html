@@ -31,9 +31,9 @@
             <script type="text/javascript">
                 $(document).ready(function () {
                     const urlParams = new URLSearchParams(window.location.search);
-                    const id = urlParams.get('id');
+                    const userId = urlParams.get('id');
                     $.ajax({
-                            url: 'tests/forUser/' + id,
+                            url: 'tests/forUser/' + userId,
                             dataType: 'text',
                             type: 'GET',
                             success: function (data) {
@@ -47,10 +47,10 @@
                                     table += "<td></td>";
 
                                     var testId = testsList[i].id;
-                                    var linkToRunTest = 'href="/user/runTest?id=';
+                                    var linkToRunTest = 'href="/user/runTest?userId=';
 
                                     table += "<td>" + '<a class="btn btn-outline-warning btn-sm"';
-                                    table += linkToRunTest + testId + '"';
+                                    table += linkToRunTest + userId + '&testId=' + testId + '"';
                                     table += 'role="button">Пройти</a>';
                                     var testFinished;
                                     if (testsList[i].finished) {

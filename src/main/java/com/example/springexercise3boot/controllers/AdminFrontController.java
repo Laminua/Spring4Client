@@ -10,7 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -43,7 +42,7 @@ public class AdminFrontController {
     }
 
     @PostMapping("users")
-    public ResponseEntity<String> addUser(@Valid UserProfileDTO profileDTO, BindingResult bindingResult)
+    public ResponseEntity<String> addUser(UserProfileDTO profileDTO, BindingResult bindingResult)
             throws BindException {
         log.debug("Front backend request: requesting endpoint to create UserProfile");
 
@@ -58,7 +57,7 @@ public class AdminFrontController {
     }
 
     @PostMapping("updateUser")
-    public ResponseEntity<String> updateUser(@Valid UserProfileDTO profileDTO, BindingResult bindingResult)
+    public ResponseEntity<String> updateUser(UserProfileDTO profileDTO, BindingResult bindingResult)
             throws BindException {
         log.debug("Front backend request: updating UserProfile in database. Name: {}, Email: {}",
                 profileDTO.getName(), profileDTO.getEmail());

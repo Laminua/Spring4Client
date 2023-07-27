@@ -28,7 +28,8 @@
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const testId = urlParams.get('testId');
+    const userId = urlParams.get('userId');
 
     function Question(id, question, questionType, answers) {
         this.id = id;
@@ -70,7 +71,7 @@
         return html;
     }
 
-    $.get("http://localhost:8080/user/tests/questions/" + id, function (data) {
+    $.get("http://localhost:8080/user/tests/questions/" + userId + "/" + testId, function (data) {
         let questions = data.map(function (item) {
             return new Question(item.id, item.question, item.questionType, item.answers);
         });
@@ -103,7 +104,7 @@
 
         // Send the answers to the server
         $.ajax({
-            url: "http://localhost:8080/user/tests/questions/" + id,
+            url: "http://localhost:8080/user/tests/questions/" + testId,
             method: 'POST',
             data: JSON.stringify(answers),
             contentType: 'application/json',

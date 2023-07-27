@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,8 @@ public class AdminService {
 
     private final String apiGetUserByIdUrl;
 
+    private final String apiAddUserUrl;
+
     private final String apiUpdateUserUrl;
 
     private final String apiDeleteUserUrl;
@@ -36,6 +39,7 @@ public class AdminService {
         this.restTemplate = restTemplate;
         this.apiGetUsersListUrl = apiHostUrl + "/api/users";
         this.apiGetUserByIdUrl = apiHostUrl + "/api/users/{id}";
+        this.apiAddUserUrl = apiHostUrl + "/api/users";
         this.apiUpdateUserUrl = apiHostUrl + "/api/updateUser";
         this.apiDeleteUserUrl = apiHostUrl + "/api/deleteUser?id=";
     }
@@ -50,7 +54,7 @@ public class AdminService {
         return new ResponseEntity<>(Arrays.asList(userProfilesArr), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> addUser(UserProfileDTO profileDTO, BindingResult bindingResult)
+    public ResponseEntity<String> addUser(@Valid UserProfileDTO profileDTO, BindingResult bindingResult)
             throws BindException {
 
         if (bindingResult.hasErrors()) {
@@ -61,13 +65,13 @@ public class AdminService {
         HttpEntity<UserProfileDTO> request = new HttpEntity<>(profileDTO);
 
         try {
-            return restTemplate.exchange(apiGetUsersListUrl, HttpMethod.POST, request, String.class);
+            return restTemplate.exchange(apiAddUserUrl, HttpMethod.POST, request, String.class);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    public ResponseEntity<String> updateUser(UserProfileDTO profileDTO, BindingResult bindingResult)
+    public ResponseEntity<String> updateUser(@Valid UserProfileDTO profileDTO, BindingResult bindingResult)
             throws BindException {
 
         if (bindingResult.hasErrors()) {

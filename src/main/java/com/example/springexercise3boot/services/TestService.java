@@ -40,7 +40,7 @@ public class TestService {
         this.apiGetAllTestsUrl = apiHostUrl + "/api/tests";
         this.apiGetTestsForUserUrl = apiHostUrl + "/api/tests/forUser/{id}";
         this.apiGetTestUrl = apiHostUrl + "/api/tests/{id}";
-        this.apiGetQuestionsUrl = apiHostUrl + "/api/tests/questions/{id}";
+        this.apiGetQuestionsUrl = apiHostUrl + "/api/tests/questions/{userId}/{testId}";
         this.apiPostUserResponseOnTest = apiHostUrl + "/api/tests/questions/{id}";
     }
 
@@ -74,10 +74,10 @@ public class TestService {
         }
     }
 
-    public ResponseEntity<List<Question>> getQuestions(long id) {
+    public ResponseEntity<List<Question>> getQuestions(long userId, long testId) {
 
         try {
-            Question[] questions = restTemplate.getForObject(apiGetQuestionsUrl, Question[].class, id);
+            Question[] questions = restTemplate.getForObject(apiGetQuestionsUrl, Question[].class, userId, testId);
             return new ResponseEntity<>(Arrays.asList(questions), HttpStatus.OK);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
@@ -89,7 +89,7 @@ public class TestService {
         HttpEntity<UserAnswerDTO> request = new HttpEntity<>(userAnswerDTO);
 
         try {
-            return restTemplate.exchange(apiPostUserResponseOnTest, HttpMethod.POST, request, String.class);
+            return restTemplate.exchange(apiPostUserResponseOnTest, HttpMethod.POST, request, String.class, id);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
         }

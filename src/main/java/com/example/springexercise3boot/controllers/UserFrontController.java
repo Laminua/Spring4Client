@@ -74,11 +74,11 @@ public class UserFrontController {
         return new ModelAndView("questions");
     }
 
-    @GetMapping("tests/questions/{id}")
-    public ResponseEntity<List<Question>> getQuestions(@PathVariable long id) {
-        log.debug("Front backend: requesting questions for test with id {}", id);
+    @GetMapping("tests/questions/{userId}/{testId}")
+    public ResponseEntity<List<Question>> getQuestions(@PathVariable long userId, @PathVariable long testId) {
+        log.debug("Front backend: requesting questions for test with id {} for user with id {}", testId, userId);
 
-        return testService.getQuestions(id);
+        return testService.getQuestions(userId, testId);
     }
 
     @PostMapping("tests/questions/{id}")
