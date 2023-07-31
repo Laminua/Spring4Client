@@ -1,6 +1,6 @@
 package com.example.springexercise3boot.dto;
 
-import com.example.springexercise3boot.models.Role;
+import com.example.springexercise3boot.models.user.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class UserProfileDTO {
-    private int id;
+    private long id;
     @NotEmpty(message = "Username should not be empty")
     @Size(min = 4, max = 30, message = "Username should be between 3 and 30 characters")
     private String username;

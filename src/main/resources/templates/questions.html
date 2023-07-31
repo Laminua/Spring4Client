@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/user_style.css">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Questions</title>
+</head>
+<body>
+
+<main role="main">
+    <div class="container" id="container">
+
+        <div class="jumbotron justify-content-center" id="questionsContainer"></div>
+        <div class="col text-center">
+            <button class="btn btn-primary" id="submitAnswers">Submit Answers</button>
+        </div>
+    </div>
+</main>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const testId = urlParams.get('testId');
+    const userId = urlParams.get('userId');
+
+    function Question(id, question, questionType, answers) {
+        this.id = id;
+        this.question = question;
+        this.questionType = questionType;
+        this.answers = answers;
+    }
+
+    function createQuestionHTML(question) {
+        var html = '';
+
+        // Question ID (hidden)
+        html += '<input type="hidden" name="questionId" value="' + question.id + '">';
+
+        // Question text
+        html += '<p>' + question.id + '. ' + question.question + '</p>';
+        html += '<input type="hidden" name="questionType" value="' + question.questionType + '">';
+
+        // Answers
+        let i;
+        switch (question.questionType) {
+            case 'SINGLE_ANSWER':
+                for (i in question.answers) {
+                    html += '<input type="radio" name="answer' + question.id + '" value="' + i + '">' + question.answers[i] + '<br>';
+                }
+                break;
+
+            case 'MANY_ANSWERS':
+                for (i in question.answers) {
+                    html += '<input type="checkbox" name="answer' + question.id + '" value="' + i + '">' + question.answers[i] + '<br>';
+                }
+                break;
+
+            case 'USER_INPUT':
+                html += '<input type="text" name="answer' + question.id + '"><br>';
+                break;
+        }
+        html += '<p></p>'
+        return html;
+    }
+
+    $.get("http://localhost:8080/user/tests/questions/" + userId + "/" + testId, function (data) {
+        let questions = data.map(function (item) {
+            return new Question(item.id, item.question, item.questionType, item.answers);
+        });
+
+        // Create HTML for each question and append it to the page
+        questions.forEach(function (question) {
+            let questionHtml = createQuestionHTML(question);
+            $('#questionsContainer').append(questionHtml);
+        });
+    });
+
+    $('#submitAnswers').on('click', function () {
+        let answers = [];
+
+        // TODO fix later
+        $('input[name^="answer"]').each(function () {
+            let questionId = $(this).attr('name').replace('answer', '');
+            let answerValue = $(this).val();
+
+            if (($(this).attr('type') === 'checkbox' || $(this).attr('type') === 'radio') && !$(this).is(':checked')) {
+                return; // Skip unchecked checkboxes and radio buttons
+            }
+
+            answers.push({
+                questionId: questionId,
+                answer: answerValue,
+                questionType: getQuestionTypeById(questionId) // Assuming you have this function implemented
+            });
+        });
+
+        // Send the answers to the server
+        $.ajax({
+            url: "http://localhost:8080/user/tests/questions/" + testId,
+            method: 'POST',
+            data: JSON.stringify(answers),
+            contentType: 'application/json',
+            success: function () {
+                console.log("Successfully submitted answers");
+            }
+        });
+    });
+
+    function getQuestionTypeById(id) {
+        //...
+    }
+</script>
+
+<footer class="container">
+    <p>&copy; Yartsev Kirill, 2023</p>
+</footer>
+
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <a class="btn btn-primary" href="/user/testing">Вернуться к списку тестов</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
